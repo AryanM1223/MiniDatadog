@@ -12,4 +12,6 @@ const writeApi = influx.getWriteApi(
     process.env.INFLUX_BUCKET
 )
 
-module.exports = { Point, writeApi }
+const queryApi = influx.getQueryApi(process.env.INFLUX_ORG)
+
+module.exports = { Point, writeApi, queryApi }
