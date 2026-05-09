@@ -18,7 +18,19 @@ router.post('/', async (req,res) => {
         }
 
         writeApi.writePoint(point);
-        await writeApi.flush();
+        // flushing is stooped manually to optimize performance,
+        // later we'll use a batch strategy or a queue based system to manage this.
+        // await writeApi.flush();
+
+        // socket.io emit to clients
+        const io = req.app.get('io');
+        io.emit("new-log", {
+          level: validated.level,
+          message: validated.message,
+          service: validated.service,
+          environment: validated.environment,
+          timestamp: new Date().toISOString(),
+        });
 
         res.status(200).json({
             success: true,
