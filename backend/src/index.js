@@ -3,6 +3,7 @@ const cors = require('cors');
 const http = require('http');
 const { Server } = require('socket.io');
 const logsRouter = require('./routes/logs');
+const metricsRouter = require('./routes/metrics');
 
 require('dotenv').config();
 
@@ -31,7 +32,7 @@ io.on('connection', (socket) => {
 
 
 app.use('/logs', logsRouter);
-
+app.use('/metrics', metricsRouter);
 app.get("/", (req, res) => {
   res.send("Mini Datadog Backend Running");
 });
