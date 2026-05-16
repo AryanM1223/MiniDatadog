@@ -20,7 +20,7 @@ router.post('/', async (req,res) => {
         writeApi.writePoint(point);
         // flushing is stooped manually to optimize performance,
         // later we'll use a batch strategy or a queue based system to manage this.
-        // await writeApi.flush();
+        await writeApi.flush();
 
         // socket.io emit to clients
         const io = req.app.get('io');
@@ -46,38 +46,39 @@ router.post('/', async (req,res) => {
 })
 
 router.get('/', async(req,res) => {
-const { service, level, environment,timeRange = '-1h' } = req.query;
-try {
-    const filters = [];
-    if (service) filters.push(`r["service"]=="${service}"`);
-    if (level) filters.push(`r["level"]=="${level}"`);
-    if (environment) filters.push(`r["environment"]=="${environment}"`);
+    const { service, level, environment,timeRange = '-8d' } = req.query;
+    try {
+        const filters = [];
+        if (service) filters.push(`r["service"]=="${service}"`);
+        if (level) filters.push(`r["level"]=="${level}"`);
+        if (environment) filters.push(`r["environment"]=="${environment}"`);
 
-    const dynamicFilter = filters.length > 0 ? `|> filter(fn: (r) => ${filters.join(' and ')})` : '';
+        const dynamicFilter = filters.length > 0 ? `|> filter(fn: (r) => ${filters.join(' and ')})` : '';
 
-    const query = `
+        const query = `
             from(bucket: "${process.env.INFLUX_BUCKET}")
             |>range(start: ${timeRange})
             |> filter(fn: (r) => r["_measurement"] == "logs")
             ${dynamicFilter}
+            |> sort(columns: ["_time"], desc: true)
             |> limit(n: 100)
         `;
 
         const rows = await queryApi.collectRows(query);
 
-    res.status(200).json({
-        success: true,
-        count: rows.length,
-        data:rows,
-    });
-}
-catch (error) {
-    console.error("Flux Query Error:", error);
-    res.status(500).json({
-        success: false,
-        error: error.message
-    });
-}
+        res.status(200).json({
+            success: true,
+            count: rows.length,
+            data:rows,
+        });
+    }
+    catch (error) {
+        console.error("Flux Query Error:", error);
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
 })
 
 module.exports = router;

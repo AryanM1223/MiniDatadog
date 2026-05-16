@@ -1,5 +1,5 @@
 const express = require('express');
-const { metricSchema } = require('../validators/logValidators');
+const { metricSchema } = require('../validators/metricValidators');
 const { Point, writeApi, queryApi } = require('../influx');
 const { success } = require('zod');
 
