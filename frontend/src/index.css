@@ -1,3 +1,86 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ─── Global Design System ─────────────────────────────────────── */
+:root {
+  --font-ui: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+
+  --bg-base:    #080b10;
+  --bg-surface: #0d1117;
+  --bg-card:    #111820;
+  --bg-raised:  #161e28;
+  --bg-hover:   #1c2535;
+
+  --border-subtle: rgba(255,255,255,0.06);
+  --border-muted:  rgba(255,255,255,0.10);
+
+  --text-primary:  #e6edf3;
+  --text-secondary: #8b949e;
+  --text-muted:    #484f58;
+
+  --accent-blue:   #58a6ff;
+  --accent-green:  #3fb950;
+  --accent-yellow: #d29922;
+  --accent-red:    #f85149;
+  --accent-purple: #bc8cff;
+  --accent-cyan:   #39c5cf;
+
+  --glow-blue:   0 0 12px rgba(88,166,255,0.25);
+  --glow-green:  0 0 12px rgba(63,185,80,0.25);
+  --glow-red:    0 0 12px rgba(248,81,73,0.30);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body, #root {
+  height: 100%;
+  background-color: var(--bg-base);
+  color: var(--text-primary);
+  font-family: var(--font-ui);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ─── Custom Scrollbar ──────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.12);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.22); }
+
+/* ─── Terminal-style log scrollbar ─────────────────────────────── */
+.terminal-scroll::-webkit-scrollbar { width: 5px; }
+.terminal-scroll::-webkit-scrollbar-track { background: #0a0a0a; }
+.terminal-scroll::-webkit-scrollbar-thumb {
+  background: #2a2a2a;
+  border-radius: 2px;
+}
+
+/* ─── Utility ───────────────────────────────────────────────────── */
+.font-mono { font-family: var(--font-mono) !important; }
+
+/* subtle scan-line overlay for terminal feel */
+.scanlines::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.03) 2px,
+    rgba(0,0,0,0.03) 4px
+  );
+  pointer-events: none;
+  z-index: 0;
+}
