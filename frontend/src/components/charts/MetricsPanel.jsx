@@ -11,9 +11,15 @@ const MetricsPanel = ({ metricsByName }) => {
       p-4
     "
     >
-      {Object.entries(metricsByName).map(([name, data]) => (
-        <MetricChart key={name} title={name} data={data} />
-      ))}
+      {Object.entries(metricsByName).map(
+        ([metricName, services]) => (
+          <MetricChart
+            key={metricName}
+            title={metricName}
+            services={services}
+          />
+        )
+      )}
     </div>
   );
 };
