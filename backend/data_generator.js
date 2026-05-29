@@ -37,7 +37,7 @@ for (let currentMs = startTime; currentMs < now; currentMs += 60000) {
 
     // --- Generate the Metric ---
     const metricPoint = new Point('metrics')
-        .tag('service', 'payment-api')
+        .tag('service', 'auth-api')
         .tag('name', 'response_time')
         .tag('environment', 'production')
         .tag('unit', 'ms')
@@ -67,7 +67,7 @@ for (let currentMs = startTime; currentMs < now; currentMs += 60000) {
     }
 
     const logPoint = new Point('logs')
-        .tag('service', 'payment-api')
+        .tag('service', 'auth-api')
         .tag('level', level)
         .tag('environment', 'production')
         .stringField('message', msg)

@@ -26,12 +26,17 @@ export const useMetrics = (raw) =>{
     
         metrics.forEach((metric) =>{
             const name = metric.name;
-    
+            const service = metric.service;
+
             if(!grouped[name]){
-                grouped[name] = [];
+                grouped[name] = {};
             }
     
-            grouped[name].push(metric);
+            if(!grouped[name][service]){
+                grouped[name][service] = [];
+            }
+    
+            grouped[name][service].push(metric);
         })
         return grouped;
     }
@@ -40,6 +45,7 @@ export const useMetrics = (raw) =>{
         const fetchMetrics = async () =>{
             try {
                 const res = await api.get('/metrics');
+                console.log("metric")
                 console.log(res.data);
 
                 const normalized = res.data.data.map(normaliseMetric);
@@ -49,6 +55,7 @@ export const useMetrics = (raw) =>{
                 );
                 
                 const grouped = groupMetricsByName(normalized);
+                // console.log(grouped)
 
                 setMetricByName(grouped);
             } catch (error) {
@@ -62,12 +69,15 @@ export const useMetrics = (raw) =>{
         fetchMetrics();
 
         socket.on("new-metric", (metric) => {
-          const normalized = normalizeMetric(metric);
+          const normalized = normaliseMetric(metric);
 
           setMetricsByName((prev) => {
             const metricName = normalized.name;
+            const service = normalized.service;
 
-            const existing = prev[metricName] || [];
+            const metricGroup = prev[metricName] || [];
+
+            const existing = metricGroup[service] || [];
 
             const updated = [...existing, normalized];
 
@@ -78,7 +88,12 @@ export const useMetrics = (raw) =>{
             return {
               ...prev,
 
-              [metricName]: updated.slice(-100),
+              [metricName]: {
+                ...metricGroup,
+
+                [service]: updated.slice(0,100)
+              }
+
             };
           });
         });
